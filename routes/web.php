@@ -14,5 +14,14 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
+
+
+Route::get('/family', 'FamilyController@index');
+Route::get('/family/create', 'FamilyController@create');
+Route::post('/family/store', 'FamilyController@store');
+Route::get('/family/{id}', 'FamilyController@show');
+Route::get('/family/{id}/edit', 'FamilyController@edit');
+Route::put('/family/{id}', 'FamilyController@update');
+Route::delete('/family/{id}', 'FamilyController@destroy');
