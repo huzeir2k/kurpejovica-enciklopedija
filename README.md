@@ -1,4 +1,4 @@
-# Porodično Stablo Kurpejovića
+# Kurpejovića Enciklopedija (Porodično Stablo Kurpejovića)
 
 Ovaj projekat ima za cilj detaljno dokumentovanje i skladištenje podataka koji se odnose na porodicu Kurpejović i sve osobe povezane s njom.
 
