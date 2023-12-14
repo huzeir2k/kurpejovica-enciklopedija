@@ -1,66 +1,29 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Porodično Stablo Kurpejovića
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Ovaj projekat ima za cilj detaljno dokumentovanje i skladištenje podataka koji se odnose na porodicu Kurpejović i sve osobe povezane s njom.
 
-## About Laravel
+## Sadržaj Projekta
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 1. Prikupljanje i Čuvanje Podataka
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Projekat se fokusira na stalno ažuriranje i čuvanje informacija o članovima porodice Kurpejović, kao i svima koji su s njima povezani. Podaci uključuju genealogiju, biografske podatke i druge relevantne informacije o članovima porodice.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 2. Otkrivanje Porekla Imena Kurpejović
 
-## Learning Laravel
+Projekat ima za cilj istraživanje porekla imena Kurpejović kako bi se otkrilo više o istorijskim korenima porodice. Ovo uključuje analizu dostupnih izvora i sagledavanje evolucije imena kroz vreme.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### 3. Saradnja sa Poznatim Istorčarima Plemena
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Informacije u ovom projektu uglavnom potiču od poznatih istoričara unutar plemena Kurpejovića, koji su značajno doprineli evidentiranju članova porodice i njihovih rođaka. Njihov doprinos pruža pouzdane i autentične informacije.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 4. Povratne Informacije i Upiti
 
-## Laravel Sponsors
+Svi komentari, sugestije i upiti vezani za informacije su dobrodošli. Molimo korisnike da šalju svoje povratne informacije direktno razvojnom timu projekta.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Kontakt
 
-### Premium Partners
+Za sva pitanja i informacije, slobodno se obratite razvojnom timu projekta.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+---
 
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+**Napomena:** Ovaj projekat ima za cilj doprinos zajednici i očuvanje kulturne baštine porodice Kurpejović. Svi korisnici su pozvani da doprinesu i unaprede projekat kako bi se zajedno očuvala i proširila istorija ove porodice.
