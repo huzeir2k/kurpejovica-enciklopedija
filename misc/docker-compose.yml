@@ -1,0 +1,81 @@
+# Docker Compose configuration for local development and production
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: kurpejovica_postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-kurpejovica_db}
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+    ports:
+      - "5432:5432"
+    volumes:
+      # Persist database data
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - kurpejovica
+
+  # Express Backend API
+  backend:
+    build: ./backend
+    container_name: kurpejovica_backend
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-kurpejovica_db}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      JWT_SECRET: ${JWT_SECRET:-dev-secret-key-change-in-production}
+      DEEPL_API_KEY: ${DEEPL_API_KEY:-}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:5173}
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      # Mount source for development
+      - ./backend/src:/app/src
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - kurpejovica
+
+  # Vue Frontend (optional, usually served separately)
+  frontend:
+    image: node:20-alpine
+    container_name: kurpejovica_frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_URL: http://backend:3000/api
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      - backend
+    networks:
+      - kurpejovica
+
+volumes:
+  postgres_data:
+
+networks:
+  kurpejovica:
+    driver: bridge
