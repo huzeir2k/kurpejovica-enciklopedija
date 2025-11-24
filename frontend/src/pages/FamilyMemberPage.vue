@@ -4,6 +4,8 @@ import { useRoute } from 'vue-router'
 import { familyService } from '@/services/familyService'
 import { articleService } from '@/services/articleService'
 import { useLanguageStore } from '@/stores/language'
+import PageHeader from '@/components/PageHeader.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const route = useRoute()
 const languageStore = useLanguageStore()
@@ -61,17 +63,17 @@ watch(() => languageStore.currentLanguage, () => {
 
 <template>
   <div class="family-member-page">
-    <div v-if="loading" class="loading">
-      Loading...
-    </div>
+    <LoadingSpinner
+      v-if="loading"
+      message="Loading..."
+      size="large"
+    />
 
-    <div v-else-if="familyMember" class="member-detail">
-      <div class="member-header">
-        <h1>{{ familyMember.name }}</h1>
-        <p v-if="familyMember.birthYear" class="dates">
-          {{ familyMember.birthYear }} - {{ familyMember.deathYear || 'Present' }}
-        </p>
-      </div>
+    <template v-else-if="familyMember">
+      <PageHeader
+        :title="familyMember.name"
+        :subtitle="familyMember.birthYear ? `${familyMember.birthYear} - ${familyMember.deathYear || 'Present'}` : ''"
+      />
 
       <div class="content-grid">
         <div class="article-section">
@@ -124,7 +126,7 @@ watch(() => languageStore.currentLanguage, () => {
           </div>
         </aside>
       </div>
-    </div>
+    </template>
 
     <div v-else class="not-found">
       Family member not found.
@@ -137,30 +139,9 @@ watch(() => languageStore.currentLanguage, () => {
   padding: 0;
 }
 
-.loading,
 .not-found {
   text-align: center;
   padding: 3rem 1rem;
-  color: var(--text-muted);
-}
-
-.member-header {
-  background-color: var(--primary-light);
-  border-left: 4px solid var(--primary-color);
-  padding: 1.5rem;
-  border-radius: 3px;
-  margin-bottom: 1.5rem;
-}
-
-.member-header h1 {
-  margin: 0 0 0.5rem 0;
-  font-size: 2rem;
-  color: var(--text-color);
-}
-
-.dates {
-  margin: 0;
-  font-size: 0.95rem;
   color: var(--text-muted);
 }
 
@@ -282,10 +263,6 @@ watch(() => languageStore.currentLanguage, () => {
 @media (max-width: 768px) {
   .content-grid {
     grid-template-columns: 1fr;
-  }
-
-  .member-header h1 {
-    font-size: 1.6rem;
   }
 
   .sidebar {

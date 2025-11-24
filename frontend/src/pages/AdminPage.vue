@@ -2,6 +2,12 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import api from '@/services/api'
+import PageHeader from '@/components/PageHeader.vue'
+import AlertMessage from '@/components/AlertMessage.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
+import FormInput from '@/components/FormInput.vue'
+import FormSelect from '@/components/FormSelect.vue'
+import Button from '@/components/Button.vue'
 
 const authStore = useAuthStore()
 
@@ -125,77 +131,84 @@ onMounted(loadUsers)
 
 <template>
   <div class="admin-page" v-if="authStore.isAdmin">
-    <div class="page-header">
-      <h1>Admin Panel</h1>
-      <p>Manage users and system settings</p>
-    </div>
+    <PageHeader
+      title="Admin Panel"
+      subtitle="Manage users and system settings"
+    />
 
     <!-- Messages -->
-    <div v-if="error" class="alert alert-error">
-      {{ error }}
-    </div>
-    <div v-if="success" class="alert alert-success">
-      {{ success }}
-    </div>
+    <AlertMessage
+      v-if="error"
+      type="error"
+      :message="error"
+      @dismiss="error = ''"
+    />
+    <AlertMessage
+      v-if="success"
+      type="success"
+      :message="success"
+      @dismiss="success = ''"
+    />
 
     <!-- Create User Section -->
     <div class="section">
       <div class="section-header">
         <h2>Create New User</h2>
-        <button
+        <Button
+          variant="secondary"
           @click="showForm = !showForm"
-          class="btn-toggle"
         >
           {{ showForm ? 'Hide Form' : 'Show Form' }}
-        </button>
+        </Button>
       </div>
 
       <form v-if="showForm" @submit.prevent="createUser" class="form">
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            id="email"
-            v-model="newUser.email"
-            type="email"
-            placeholder="user@example.com"
-            required
-          />
-        </div>
+        <FormInput
+          id="email"
+          label="Email"
+          type="email"
+          :value="newUser.email"
+          placeholder="user@example.com"
+          required
+          @update:value="newUser.email = $event"
+        />
 
-        <div class="form-group">
-          <label for="name">Full Name</label>
-          <input
-            id="name"
-            v-model="newUser.name"
-            type="text"
-            placeholder="John Doe"
-            required
-          />
-        </div>
+        <FormInput
+          id="name"
+          label="Full Name"
+          type="text"
+          :value="newUser.name"
+          placeholder="John Doe"
+          required
+          @update:value="newUser.name = $event"
+        />
 
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input
-            id="password"
-            v-model="newUser.password"
-            type="password"
-            placeholder="••••••••"
-            required
-          />
-        </div>
+        <FormInput
+          id="password"
+          label="Password"
+          type="password"
+          :value="newUser.password"
+          placeholder="••••••••"
+          required
+          @update:value="newUser.password = $event"
+        />
 
-        <div class="form-group">
-          <label for="role">Role</label>
-          <select id="role" v-model="newUser.role" required>
-            <option v-for="role in roles" :key="role.value" :value="role.value">
-              {{ role.label }}
-            </option>
-          </select>
-        </div>
+        <FormSelect
+          id="role"
+          label="Role"
+          :value="newUser.role"
+          :options="roles"
+          required
+          @update:value="newUser.role = $event"
+        />
 
-        <button type="submit" class="btn btn-primary" :disabled="loading">
+        <Button
+          type="submit"
+          variant="primary"
+          :loading="loading"
+        >
           {{ loading ? 'Creating...' : 'Create User' }}
-        </button>
+        </Button>
       </form>
     </div>
 
@@ -203,9 +216,11 @@ onMounted(loadUsers)
     <div class="section">
       <h2>All Users ({{ users.length }})</h2>
 
-      <div v-if="loading" class="loading">
-        Loading users...
-      </div>
+      <LoadingSpinner
+        v-if="loading"
+        message="Loading users..."
+        size="medium"
+      />
 
       <div v-else-if="users.length > 0" class="users-table">
         <div class="table-header">
@@ -236,13 +251,14 @@ onMounted(loadUsers)
             </span>
           </div>
           <div class="col-actions">
-            <button
+            <Button
+              variant="danger"
+              size="small"
+              :loading="loading"
               @click="deleteUser(user.id, user.name)"
-              class="btn btn-danger btn-small"
-              :disabled="loading"
             >
               Delete
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -263,24 +279,6 @@ onMounted(loadUsers)
 <style scoped>
 .admin-page {
   padding: 0;
-}
-
-.page-header {
-  background-color: var(--primary-light);
-  border-left: 4px solid var(--primary-color);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border-radius: 3px;
-}
-
-.page-header h1 {
-  margin: 0 0 0.5rem 0;
-  color: var(--text-color);
-}
-
-.page-header p {
-  margin: 0;
-  color: var(--text-muted);
 }
 
 .section {
@@ -311,120 +309,12 @@ onMounted(loadUsers)
   margin: 0;
 }
 
-.btn-toggle {
-  background: var(--primary-light);
-  color: var(--primary-color);
-  border: 1px solid var(--border-color);
-  padding: 0.5rem 1rem;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.btn-toggle:hover {
-  background: var(--primary-color);
-  color: white;
-}
-
 /* Form Styles */
 .form {
   background: var(--bg-secondary);
   padding: 1.5rem;
   border-radius: 3px;
   margin-bottom: 1rem;
-}
-
-.form-group {
-  margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.4rem;
-  font-weight: 600;
-  color: var(--text-color);
-  font-size: 0.95rem;
-}
-
-.form-group input,
-.form-group select {
-  width: 100%;
-  padding: 0.6rem 0.8rem;
-  border: 1px solid var(--border-color);
-  border-radius: 3px;
-  font-size: 1rem;
-  background: white;
-  color: var(--text-color);
-  font-family: inherit;
-}
-
-.form-group input:focus,
-.form-group select:focus {
-  outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 2px rgba(51, 102, 204, 0.15);
-}
-
-/* Alert Styles */
-.alert {
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  border-radius: 3px;
-  border-left: 4px solid;
-}
-
-.alert-error {
-  background: #fee;
-  border-left-color: var(--error-color);
-  color: var(--error-color);
-}
-
-.alert-success {
-  background: #efe;
-  border-left-color: var(--success-color);
-  color: var(--success-color);
-}
-
-/* Button Styles */
-.btn {
-  padding: 0.6rem 1rem;
-  border: 1px solid;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  transition: all 0.2s;
-  font-family: inherit;
-}
-
-.btn-primary {
-  background: var(--primary-color);
-  color: white;
-  border-color: var(--primary-dark);
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: var(--primary-dark);
-}
-
-.btn-danger {
-  background: var(--error-color);
-  color: white;
-  border-color: #c82333;
-}
-
-.btn-danger:hover:not(:disabled) {
-  opacity: 0.8;
-}
-
-.btn-small {
-  padding: 0.4rem 0.8rem;
-  font-size: 0.85rem;
-}
-
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
 }
 
 /* Table Styles */
@@ -468,7 +358,7 @@ onMounted(loadUsers)
   font-size: 0.95rem;
 }
 
-.col-role select {
+.role-select {
   width: 100%;
   padding: 0.4rem;
   border: 1px solid var(--border-color);
@@ -493,12 +383,6 @@ onMounted(loadUsers)
 .status.inactive {
   background: #ffebee;
   color: var(--error-color);
-}
-
-.loading {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-muted);
 }
 
 .empty-state {
@@ -561,10 +445,6 @@ onMounted(loadUsers)
     flex-direction: column;
     gap: 1rem;
     align-items: flex-start;
-  }
-
-  .btn-toggle {
-    width: 100%;
   }
 }
 </style>
