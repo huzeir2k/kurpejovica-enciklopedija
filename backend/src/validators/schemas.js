@@ -12,12 +12,12 @@ import Joi from 'joi'
 // ============================================
 
 export const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
   password: Joi.string().min(6).required(),
 })
 
 export const registerSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
   password: Joi.string().min(8).required(),
   name: Joi.string().min(2).required(),
 })
@@ -29,19 +29,19 @@ export const registerSchema = Joi.object({
 export const createFamilyMemberSchema = Joi.object({
   name: Joi.string().min(2).required(),
   birth_year: Joi.number().integer().min(1800).max(new Date().getFullYear()),
-  death_year: Joi.number().integer().min(1800),
+  death_year: Joi.number().integer().min(1800).allow(null),
   birth_place: Joi.string(),
   occupation: Joi.string(),
-  short_bio: Joi.string().max(500),
+  short_bio: Joi.string().max(1000),
 })
 
 export const updateFamilyMemberSchema = Joi.object({
   name: Joi.string().min(2),
   birth_year: Joi.number().integer().min(1800).max(new Date().getFullYear()),
-  death_year: Joi.number().integer().min(1800),
+  death_year: Joi.number().integer().min(1800).allow(null),
   birth_place: Joi.string(),
   occupation: Joi.string(),
-  short_bio: Joi.string().max(500),
+  short_bio: Joi.string().max(1000),
 }).min(1)
 
 // ============================================

@@ -1,11 +1,13 @@
 /**
  * Image Routes
  * 
- * Handle file uploads and image management for family members.
+ * Handle file uploads and image management for family members and articles.
+ * Supports image metadata (captions, alt text, display sizing).
+ * Limits gallery to 10 images per content box.
  */
 
 import express from 'express'
-import { requireAuth, requireAdmin } from '../middleware/auth.js'
+import { authenticateToken, requireAdmin } from '../middleware/auth.js'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
@@ -31,7 +33,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB max
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB max
   fileFilter: (req, file, cb) => {
     const allowedMimes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     if (allowedMimes.includes(file.mimetype)) {
@@ -43,41 +45,63 @@ const upload = multer({
 })
 
 /**
- * Upload image for a family member
+ * Upload image for a family member or article
  * POST /images/upload
- * Requires: family_member_id, image file
+ * 
+ * Body:
+ * - file: Image file (multipart form data)
+ * - family_member_id: (optional) Family member ID
+ * - article_id: (optional) General article ID
+ * - caption: (optional) Image caption text
+ * - alt_text: (optional) Alt text for accessibility
+ * - description: (optional) Detailed description
+ * - display_width: (optional) CSS width (default: 100%)
+ * 
+ * Note: Either family_member_id or article_id required
  */
-router.post('/upload', requireAuth, requireAdmin, upload.single('file'), async (req, res, next) => {
+router.post('/upload', authenticateToken, requireAdmin, upload.single('file'), async (req, res, next) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' })
     }
 
-    const { family_member_id, description, is_primary } = req.body
+    const { 
+      family_member_id, 
+      article_id,
+      caption, 
+      alt_text, 
+      description, 
+      display_width 
+    } = req.body
 
-    if (!family_member_id) {
-      // Clean up uploaded file
+    // Require at least one parent (family member or article)
+    if (!family_member_id && !article_id) {
       fs.unlinkSync(req.file.path)
-      return res.status(400).json({ error: 'family_member_id is required' })
+      return res.status(400).json({ error: 'Either family_member_id or article_id is required' })
     }
 
     const imageData = {
-      family_member_id: parseInt(family_member_id),
+      family_member_id: family_member_id ? parseInt(family_member_id) : null,
+      article_id: article_id ? parseInt(article_id) : null,
       filename: req.file.filename,
       file_path: req.file.path,
       file_size: req.file.size,
       mime_type: req.file.mimetype,
       uploaded_by: req.user.id,
+      caption: caption || null,
+      alt_text: alt_text || null,
       description: description || null,
-      is_primary: is_primary === 'true' || is_primary === true,
+      display_width: display_width || '100%',
     }
 
     const image = await Image.createImage(imageData)
 
     res.status(201).json({
       message: 'Image uploaded successfully',
-      image,
-      url: `/images/${image.filename}`,
+      image: {
+        ...image,
+        url: `/images/${image.filename}`,
+      },
     })
   } catch (error) {
     // Clean up uploaded file on error
@@ -91,6 +115,8 @@ router.post('/upload', requireAuth, requireAdmin, upload.single('file'), async (
 /**
  * Get images for a family member
  * GET /images/member/:memberId
+ * 
+ * Returns all images for a family member (limited to 10 for gallery display)
  */
 router.get('/member/:memberId', async (req, res, next) => {
   try {
@@ -100,6 +126,31 @@ router.get('/member/:memberId', async (req, res, next) => {
 
     res.json({
       family_member_id: parseInt(memberId),
+      count: images.length,
+      images: images.slice(0, 10).map(img => ({
+        ...img,
+        url: `/images/${img.filename}`,
+      })),
+    })
+  } catch (error) {
+    next(error)
+  }
+})
+
+/**
+ * Get images for an article
+ * GET /images/article/:articleId
+ * 
+ * Returns all images for an article (limited to 10 for gallery display)
+ */
+router.get('/article/:articleId', async (req, res, next) => {
+  try {
+    const { articleId } = req.params
+
+    const images = await Image.getImagesByArticle(parseInt(articleId))
+
+    res.json({
+      article_id: parseInt(articleId),
       count: images.length,
       images: images.map(img => ({
         ...img,
@@ -137,11 +188,19 @@ router.get('/member/:memberId/primary', async (req, res, next) => {
 /**
  * Update image metadata
  * PUT /images/:imageId
+ * 
+ * Body:
+ * - caption: Image caption text
+ * - alt_text: Alt text for accessibility
+ * - description: Detailed description
+ * - display_width: CSS width (e.g., "50%", "300px")
+ * - is_primary: Whether this is primary image
+ * - family_member_id: (required if setting as primary)
  */
-router.put('/:imageId', requireAuth, requireAdmin, async (req, res, next) => {
+router.put('/:imageId', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const { imageId } = req.params
-    const { description, is_primary, family_member_id } = req.body
+    const { caption, alt_text, description, display_width, is_primary, family_member_id } = req.body
 
     const image = await Image.getImageById(parseInt(imageId))
     if (!image) {
@@ -160,8 +219,13 @@ router.put('/:imageId', requireAuth, requireAdmin, async (req, res, next) => {
       })
     }
 
-    // Otherwise just update description
-    const updated = await Image.updateImage(parseInt(imageId), { description })
+    // Update image metadata
+    const updated = await Image.updateImage(parseInt(imageId), { 
+      caption, 
+      alt_text, 
+      description, 
+      display_width,
+    })
 
     res.json({
       ...updated,
@@ -176,7 +240,7 @@ router.put('/:imageId', requireAuth, requireAdmin, async (req, res, next) => {
  * Delete image
  * DELETE /images/:imageId
  */
-router.delete('/:imageId', requireAuth, requireAdmin, async (req, res, next) => {
+router.delete('/:imageId', authenticateToken, requireAdmin, async (req, res, next) => {
   try {
     const { imageId } = req.params
 

@@ -178,3 +178,29 @@ export const createFamilyRelationship = async (req, res, next) => {
     next(error)
   }
 }
+
+/**
+ * Delete family member (editor+ only)
+ * DELETE /family-members/:id
+ */
+export const deleteFamilyMember = async (req, res, next) => {
+  try {
+    const { id } = req.params
+
+    // Get member details for audit before deletion
+    const member = await FamilyMember.getFamilyMemberById(id)
+    if (!member) {
+      return res.status(404).json({ error: 'Family member not found' })
+    }
+
+    // Delete the family member (relationships will be cascade deleted)
+    await FamilyMember.deleteFamilyMember(id)
+
+    // Log audit
+    await logAudit(req.user.id, 'family_members', id, 'DELETE', member, null)
+
+    res.json({ message: 'Family member deleted successfully' })
+  } catch (error) {
+    next(error)
+  }
+}

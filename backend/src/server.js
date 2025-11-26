@@ -21,6 +21,7 @@ import 'express-async-errors'
 import authRoutes from './routes/authRoutes.js'
 import familyRoutes from './routes/familyRoutes.js'
 import articleRoutes from './routes/articleRoutes.js'
+import generalArticleRoutes from './routes/generalArticleRoutes.js'
 import imageRoutes from './routes/imageRoutes.js'
 
 // Import middleware
@@ -92,6 +93,7 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/family-members', familyRoutes)
 app.use('/api/articles', articleRoutes)
+app.use('/api/general-articles', generalArticleRoutes)
 app.use('/api/images', imageRoutes)
 
 // ============================================
@@ -139,6 +141,7 @@ const server = app.listen(PORT, () => {
 ║   - /api/auth        - Authentication                     ║
 ║   - /api/family-members - Family management              ║
 ║   - /api/articles    - Article management                ║
+║   - /api/general-articles - General articles             ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
   `)

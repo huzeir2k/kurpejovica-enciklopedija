@@ -1,0 +1,132 @@
+.home-page {
+  padding: 0;
+}
+
+.featured-section {
+  margin-bottom: 4rem;
+}
+
+.featured-section h2 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+}
+
+.members-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.article-card {
+  background-color: var(--bg-color);
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(51, 52, 64, 0.08);
+}
+
+.article-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 6px 16px rgba(70, 120, 140, 0.2);
+  transform: translateY(-4px);
+}
+
+.article-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.article-title {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0;
+  flex-grow: 1;
+  line-height: 1.4;
+  font-family: 'Merriweather', serif;
+}
+
+.article-category {
+  display: inline-block;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  padding: 0.35rem 0.85rem;
+  border-radius: 4px;
+  font-size: 0.75em;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.article-preview {
+  color: var(--text-muted);
+  font-size: 0.95em;
+  line-height: 1.7;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.article-footer {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 0.85em;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  margin-top: auto;
+}
+
+.read-more {
+  color: var(--primary-color);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.article-card:hover .read-more {
+  color: var(--accent-color);
+  transform: translateX(4px);
+}
+
+.see-all {
+  text-align: center;
+  margin: 2rem 0;
+}
+
+.see-all a {
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .members-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .articles-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .see-all {
+    margin: 1.5rem 0;
+  }
+
+  .featured-section {
+    margin-bottom: 3rem;
+  }
+}

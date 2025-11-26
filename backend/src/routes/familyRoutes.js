@@ -61,4 +61,11 @@ router.put('/:id', authenticateToken, requireEditor, validate(updateFamilyMember
  */
 router.post('/:id/relationships', authenticateToken, requireEditor, familyController.createFamilyRelationship)
 
+/**
+ * DELETE /family-members/:id
+ * Protected endpoint to delete family member
+ * Requires: authenticateToken, editor+ role
+ */
+router.delete('/:id', authenticateToken, requireEditor, familyController.deleteFamilyMember)
+
 export default router

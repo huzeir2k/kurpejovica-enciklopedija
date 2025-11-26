@@ -204,3 +204,33 @@ export const createFamilyRelationship = async (memberId, relatedMemberId, relati
   )
   return result.rows[0]
 }
+
+/**
+ * Delete a family member
+ * @param {number} id - Member ID
+ * @returns {Promise<void>}
+ */
+export const deleteFamilyMember = async (id) => {
+  try {
+    // Delete all relationships involving this member
+    await query(
+      `DELETE FROM family_relationships 
+       WHERE member_id = $1 OR related_member_id = $1`,
+      [id]
+    )
+  } catch (err) {
+    // Table may not exist yet, continue
+  }
+
+  // Delete all articles for this member (and article translations cascade)
+  await query(
+    `DELETE FROM articles WHERE family_member_id = $1`,
+    [id]
+  )
+
+  // Delete the family member
+  await query(
+    `DELETE FROM family_members WHERE id = $1`,
+    [id]
+  )
+}

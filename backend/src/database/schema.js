@@ -118,19 +118,44 @@ const initializeSchema = async () => {
       CREATE TABLE IF NOT EXISTS images (
         id SERIAL PRIMARY KEY,
         family_member_id INTEGER REFERENCES family_members(id) ON DELETE CASCADE,
+        article_id INTEGER REFERENCES general_articles(id) ON DELETE CASCADE,
         filename VARCHAR(255) NOT NULL,
         file_path VARCHAR(255) NOT NULL,
         file_size INTEGER,
         mime_type VARCHAR(100),
         uploaded_by INTEGER REFERENCES users(id),
         description TEXT,
+        caption TEXT,
+        width INTEGER,
+        height INTEGER,
+        display_width VARCHAR(50) DEFAULT '100%',
+        alt_text VARCHAR(255),
         is_primary BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
       
       CREATE INDEX IF NOT EXISTS idx_images_member ON images(family_member_id);
+      CREATE INDEX IF NOT EXISTS idx_images_article ON images(article_id);
       CREATE INDEX IF NOT EXISTS idx_images_filename ON images(filename);
+    `)
+
+    // General articles table - for standalone articles not tied to family members
+    await query(`
+      CREATE TABLE IF NOT EXISTS general_articles (
+        id SERIAL PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        category VARCHAR(100),
+        content TEXT NOT NULL,
+        created_by INTEGER NOT NULL REFERENCES users(id),
+        updated_by INTEGER REFERENCES users(id),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+      
+      CREATE INDEX IF NOT EXISTS idx_general_articles_title ON general_articles(title);
+      CREATE INDEX IF NOT EXISTS idx_general_articles_category ON general_articles(category);
+      CREATE INDEX IF NOT EXISTS idx_general_articles_created ON general_articles(created_at);
     `)
 
     console.log('✓ Database schema created successfully')

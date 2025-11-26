@@ -1,0 +1,252 @@
+.family-management-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem 0 2.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.tab {
+  padding: 0.9rem 1.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--muted-color);
+  font-size: 1rem;
+  letter-spacing: 0.3px;
+  transition: all 0.3s ease;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+}
+
+.tab:hover {
+  color: var(--primary-color);
+}
+
+.tab.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+}
+
+/* Section */
+.section {
+  background: white;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 2px solid var(--border-color);
+  margin-bottom: 2.5rem;
+  box-shadow: 0 2px 8px rgba(51, 52, 64, 0.08);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.section-header h2 {
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin: 0;
+  font-family: 'Merriweather', serif;
+  letter-spacing: -0.3px;
+}
+
+/* Form */
+.form {
+  background: var(--primary-light);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border-color);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.relationship-info {
+  background: var(--primary-light);
+  padding: 1rem 1.25rem;
+  border-radius: 6px;
+  border-left: 4px solid var(--accent-teal);
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.relationship-info strong {
+  color: var(--primary-color);
+  font-weight: 700;
+}
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+/* Members List */
+.members-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.member-card {
+  background: white;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.member-card:hover {
+  border-color: var(--accent-teal);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.member-header {
+  margin-bottom: 1rem;
+}
+
+.member-header h3 {
+  color: var(--primary-color);
+  font-size: 1.15rem;
+  margin: 0 0 0.4rem;
+  font-family: 'Merriweather', serif;
+  letter-spacing: -0.3px;
+}
+
+.years {
+  color: var(--muted-color);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.member-occupation {
+  color: var(--text-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-size: 0.8rem;
+}
+
+.member-bio {
+  color: var(--text-color);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.3px;
+}
+
+.member-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted-color);
+  background: var(--primary-light);
+  border-radius: 8px;
+  border: 2px dashed var(--border-color);
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* Access Denied */
+.access-denied {
+  max-width: 600px;
+  margin: 4rem auto;
+  text-align: center;
+  padding: 2rem;
+  background: var(--primary-light);
+  border-radius: 8px;
+  border: 2px solid var(--error-color);
+}
+
+.access-denied h2 {
+  color: var(--error-color);
+  font-family: 'Merriweather', serif;
+}
+
+.access-denied p {
+  color: var(--text-color);
+  line-height: 1.6;
+  margin: 0.75rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .family-management-page {
+    padding: 1rem;
+  }
+
+  .section {
+    padding: 1.25rem;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .tabs {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .tab {
+    border-bottom: none;
+    border-left: 4px solid transparent;
+    padding-left: 1rem;
+    margin-bottom: 0;
+  }
+
+  .tab.active {
+    border-left-color: var(--primary-color);
+    border-bottom: none;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .members-list {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}

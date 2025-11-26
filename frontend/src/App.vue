@@ -7,7 +7,10 @@ const authStore = useAuthStore()
 const languageStore = useLanguageStore()
 
 onMounted(async () => {
-  await authStore.fetchCurrentUser()
+  await Promise.all([
+    authStore.fetchCurrentUser(),
+    languageStore.initializeLanguage(),
+  ])
 })
 </script>
 
@@ -21,11 +24,13 @@ onMounted(async () => {
       </div>
       <div class="navbar-menu">
         <RouterLink to="/search" class="nav-link">Search</RouterLink>
+        <RouterLink to="/articles" class="nav-link">Articles</RouterLink>
         <div class="language-selector">
           <select
             :value="languageStore.currentLanguage"
             @change="languageStore.setLanguage($event.target.value)"
             class="language-select"
+            :title="languageStore.isAutoDetected ? 'Language auto-detected from your location' : 'Select language'"
           >
             <option
               v-for="lang in languageStore.getAvailableLanguages()"
@@ -35,12 +40,18 @@ onMounted(async () => {
               {{ lang.nativeName }}
             </option>
           </select>
+          <span v-if="languageStore.isAutoDetected" class="auto-detect-badge" title="This language was auto-detected">
+            🌍
+          </span>
         </div>
         <div class="auth-menu">
           <template v-if="authStore.isAuthenticated">
             <span class="user-name">{{ authStore.user?.name }}</span>
-            <RouterLink v-if="authStore.isAdmin" to="/articles" class="nav-link editor-link">
-              Edit Articles
+            <RouterLink v-if="authStore.canEdit" to="/family" class="nav-link editor-link">
+              Family Management
+            </RouterLink>
+            <RouterLink v-if="authStore.isAdmin" to="/admin/articles" class="nav-link editor-link">
+              Manage Articles
             </RouterLink>
             <RouterLink v-if="authStore.isAdmin" to="/admin" class="nav-link admin-link">
               Admin
@@ -66,145 +77,5 @@ onMounted(async () => {
   </div>
 </template>
 
-<style scoped>
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--bg-secondary);
-}
-
-.navbar {
-  background-color: white;
-  border-bottom: 1px solid var(--border-color);
-  padding: 1rem;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.navbar-brand h1 {
-  margin: 0;
-  font-size: 1.4rem;
-  color: var(--primary-color);
-}
-
-.navbar-brand a {
-  color: var(--primary-color);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-}
-
-.navbar-menu {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-}
-
-.nav-link {
-  color: var(--primary-color);
-  text-decoration: none;
-  padding: 0.4rem 0.8rem;
-  border-radius: 3px;
-  transition: background-color 0.2s;
-  font-size: 0.95rem;
-}
-
-.nav-link:hover {
-  background-color: var(--primary-light);
-}
-
-.admin-link {
-  background-color: var(--primary-light);
-  font-weight: 600;
-}
-
-.editor-link {
-  background-color: #f0f7ff;
-  color: var(--primary-color);
-  font-weight: 600;
-}
-
-.language-select {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--border-color);
-  border-radius: 3px;
-  font-size: 0.9rem;
-  background-color: white;
-  color: var(--text-color);
-}
-
-.auth-menu {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-  margin-left: auto;
-}
-
-.user-name {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-}
-
-.btn-logout {
-  background-color: transparent;
-  color: var(--primary-color);
-  border: 1px solid var(--border-color);
-  padding: 0.4rem 0.8rem;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.btn-logout:hover {
-  background-color: var(--primary-light);
-}
-
-.main-content {
-  flex: 1;
-  padding: 1.5rem;
-  max-width: 900px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.footer {
-  background-color: white;
-  text-align: center;
-  padding: 1.5rem;
-  border-top: 1px solid var(--border-color);
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-@media (max-width: 768px) {
-  .navbar {
-    padding: 0.75rem;
-  }
-
-  .navbar-menu {
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-  }
-
-  .navbar-brand h1 {
-    font-size: 1.2rem;
-  }
-
-  .auth-menu {
-    margin-left: 0;
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .main-content {
-    padding: 1rem;
-  }
-}
-</style>
+<style scoped src="@/styles/App.css"></style>
 

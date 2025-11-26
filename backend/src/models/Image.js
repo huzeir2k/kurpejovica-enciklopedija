@@ -2,23 +2,57 @@
  * Image Model
  * 
  * Database operations for image/media file management.
+ * Supports images for both family members and articles with sizing, captions, and galleries.
  */
 
 import { query } from '../database/db.js'
 
 /**
  * Upload/create an image record
- * @param {Object} imageData - Image data
+ * @param {Object} imageData - Image data including width, height, caption, alt text
  * @returns {Promise<Object>} Created image record
  */
 export const createImage = async (imageData) => {
-  const { family_member_id, filename, file_path, file_size, mime_type, uploaded_by, description, is_primary } = imageData
+  const { 
+    family_member_id, 
+    article_id,
+    filename, 
+    file_path, 
+    file_size, 
+    mime_type, 
+    uploaded_by, 
+    description, 
+    caption,
+    width,
+    height,
+    display_width,
+    alt_text,
+    is_primary 
+  } = imageData
 
   const result = await query(
-    `INSERT INTO images (family_member_id, filename, file_path, file_size, mime_type, uploaded_by, description, is_primary)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    `INSERT INTO images (
+      family_member_id, article_id, filename, file_path, file_size, 
+      mime_type, uploaded_by, description, caption, width, height, 
+      display_width, alt_text, is_primary
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
      RETURNING *`,
-    [family_member_id, filename, file_path, file_size, mime_type, uploaded_by, description || null, is_primary || false]
+    [
+      family_member_id || null, 
+      article_id || null,
+      filename, 
+      file_path, 
+      file_size, 
+      mime_type, 
+      uploaded_by, 
+      description || null, 
+      caption || null,
+      width || null,
+      height || null,
+      display_width || '100%',
+      alt_text || null,
+      is_primary || false
+    ]
   )
 
   return result.rows[0]
@@ -53,6 +87,20 @@ export const getImagesByMember = async (familyMemberId) => {
 }
 
 /**
+ * Get all images for an article
+ * @param {number} articleId - Article ID
+ * @returns {Promise<Array>} Array of images
+ */
+export const getImagesByArticle = async (articleId) => {
+  const result = await query(
+    `SELECT * FROM images WHERE article_id = $1 ORDER BY created_at DESC LIMIT 10`,
+    [articleId]
+  )
+
+  return result.rows
+}
+
+/**
  * Get primary image for a family member
  * @param {number} familyMemberId - Family member ID
  * @returns {Promise<Object>} Primary image or null
@@ -68,21 +116,35 @@ export const getPrimaryImage = async (familyMemberId) => {
 
 /**
  * Update image record
+ * Supports updating caption, alt text, display width, and metadata
  * @param {number} id - Image ID
  * @param {Object} updateData - Data to update
  * @returns {Promise<Object>} Updated image
  */
 export const updateImage = async (id, updateData) => {
-  const { description, is_primary } = updateData
+  const { 
+    description, 
+    caption, 
+    display_width, 
+    alt_text, 
+    is_primary,
+    width,
+    height 
+  } = updateData
 
   const result = await query(
     `UPDATE images
      SET description = COALESCE($1, description),
-         is_primary = COALESCE($2, is_primary),
+         caption = COALESCE($2, caption),
+         display_width = COALESCE($3, display_width),
+         alt_text = COALESCE($4, alt_text),
+         is_primary = COALESCE($5, is_primary),
+         width = COALESCE($6, width),
+         height = COALESCE($7, height),
          updated_at = CURRENT_TIMESTAMP
-     WHERE id = $3
+     WHERE id = $8
      RETURNING *`,
-    [description, is_primary, id]
+    [description, caption, display_width, alt_text, is_primary, width, height, id]
   )
 
   return result.rows[0]
